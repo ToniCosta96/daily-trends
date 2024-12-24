@@ -32,6 +32,13 @@ export class FeedController {
     return this.feedService.findAll();
   }
 
+  @Get('load')
+  async loadFeeds(): Promise<{ savedFeedsCount: number }> {
+    const loadedFeeds = await this.feedService.loadAll();
+
+    return { savedFeedsCount: loadedFeeds.createdFeedsCount };
+  }
+
   @Get(':id')
   async getFeed(@Param('id', ParseObjectIdPipe) id: string): Promise<Feed> {
     const feed = await this.feedService.findById(id);

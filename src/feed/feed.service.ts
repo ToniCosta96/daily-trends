@@ -1,13 +1,22 @@
 import { DeleteResult, Model } from 'mongoose';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Feed } from './feed.schema';
 import { CreateFeedDto } from './create-feed.dto';
+import { FeedScraper } from './feed-scraper';
+import { CustomDate } from 'src/core/utils/custom-date';
 
-const SELECT_FEED = 'feed headline url createdAt updatedAt';
+const SELECT_FEED = 'feed headline url date createdAt updatedAt';
+
+interface LoadAllResult {
+  deletedFeedsCount: number;
+  createdFeedsCount: number;
+}
 
 @Injectable()
 export class FeedService {
+  private readonly logger = new Logger(FeedService.name);
+
   constructor(@InjectModel(Feed.name) private feedModel: Model<Feed>) {}
 
   /** Guarda un nuevo feed. */
@@ -41,5 +50,29 @@ export class FeedService {
   /** Elimina un feed. */
   async delete(id: string): Promise<DeleteResult> {
     return this.feedModel.deleteOne({ _id: id }).exec();
+  }
+
+  /** Carga los artículos de portada de diferentes periódicos y los guarda en base de datos. */
+  async loadAll(): Promise<LoadAllResult> {
+    // Carga los feeds de todos los periódicos.
+    const feedScraper = new FeedScraper(5);
+    const newFeeds = await feedScraper.getAllFeeds();
+
+    // Elimina los feeds del día que se hayan podido guardar antes para evitar duplicados
+    const deleteRes = await this.feedModel
+      .deleteMany({ date: new CustomDate().format() })
+      .exec();
+
+    // Guarda los feeds en la base de datos
+    const res = await this.feedModel.create(newFeeds);
+
+    // Retorna información sobre las operaciones realizadas
+    const loadAllResult: LoadAllResult = {
+      deletedFeedsCount: deleteRes.deletedCount,
+      createdFeedsCount: res.length,
+    };
+    this.logger.debug(loadAllResult);
+
+    return loadAllResult;
   }
 }

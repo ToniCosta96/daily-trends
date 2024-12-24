@@ -14,7 +14,7 @@ import {
 import { FeedService } from './feed.service';
 import { Feed } from './feed.schema';
 import { CreateFeedDto } from './create-feed.dto';
-import { ParseObjectIdPipe } from 'src/pipes/object-id.pipe';
+import { ParseObjectIdPipe } from 'src/core/pipes/object-id.pipe';
 
 @Controller('feeds')
 export class FeedController {

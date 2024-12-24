@@ -1,6 +1,14 @@
-import { IsString } from 'class-validator';
+import {
+  IsDateString,
+  IsIn,
+  IsOptional,
+  IsString,
+  Matches,
+} from 'class-validator';
+import { CustomDate } from 'src/core/utils/custom-date';
 
 export class CreateFeedDto {
+  @IsIn(['el_pais', 'el_mundo'])
   @IsString()
   feed: string;
 
@@ -8,5 +16,10 @@ export class CreateFeedDto {
   headline: string;
 
   @IsString()
-  url: string;
+  url?: string;
+
+  @IsOptional()
+  @IsDateString()
+  @Matches(CustomDate.DATE_REGEX)
+  date?: string;
 }

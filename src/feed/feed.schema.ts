@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, ValidatorProps } from 'mongoose';
+import { CustomDate } from 'src/core/utils/custom-date';
 
 export type FeedDocument = HydratedDocument<Feed>;
 
@@ -11,8 +12,20 @@ export class Feed {
   @Prop({ required: true })
   headline: string;
 
-  @Prop({ required: true })
-  url: string;
+  @Prop()
+  url?: string;
+
+  @Prop({
+    default: () => new CustomDate().format(),
+    validate: {
+      validator: function (v: string): boolean {
+        return CustomDate.DATE_REGEX.test(v);
+      },
+      message: (props: ValidatorProps) =>
+        `${props.value} is not a valid format! Format must be "YYYY-MM-DD"`,
+    },
+  })
+  date: string;
 
   createdAt: Date;
   updatedAt: Date;

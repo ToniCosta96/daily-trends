@@ -29,7 +29,7 @@ export class FeedController {
 
   @Get()
   async listFeeds(): Promise<Feed[]> {
-    return this.feedService.findAll();
+    return this.feedService.find();
   }
 
   @Get('load')

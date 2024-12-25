@@ -42,9 +42,15 @@ export class FeedService {
     return this.feedModel.findById(id).select(SELECT_FEED).exec();
   }
 
-  /** Lista todos los feeds. */
-  async findAll(): Promise<Feed[]> {
-    return this.feedModel.find().select(SELECT_FEED).exec();
+  /**
+   * Lista todos los feeds de un día.
+   * @param date Día por el que se filtrarán los feeds. Por defecto es el día de hoy.
+   */
+  async find(date?: Date): Promise<Feed[]> {
+    return this.feedModel
+      .find({ date: new CustomDate(date).format() })
+      .select(SELECT_FEED)
+      .exec();
   }
 
   /** Elimina un feed. */
@@ -54,7 +60,7 @@ export class FeedService {
 
   /** Carga los artículos de portada de diferentes periódicos y los guarda en base de datos. */
   async loadAll(): Promise<LoadAllResult> {
-    // Carga los feeds de todos los periódicos.
+    // Carga los feeds de todos los periódicos
     const feedScraper = new FeedScraper(5);
     const newFeeds = await feedScraper.getAllFeeds();
 

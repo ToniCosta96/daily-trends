@@ -16,6 +16,15 @@ export class Feed {
   url?: string;
 
   @Prop({
+    type: String,
+    required: true,
+    enum: ['scraper', 'user'],
+    default: 'user',
+    select: false,
+  })
+  origin: 'scraper' | 'user';
+
+  @Prop({
     default: () => new CustomDate().format(),
     validate: {
       validator: function (v: string): boolean {

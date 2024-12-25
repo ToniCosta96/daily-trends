@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio';
-import { CreateFeedDto } from './create-feed.dto';
+import { CreateScrapedFeedDto } from './create-feed.dto';
 
 /** Obtiene los artículos de portada de varios periódicos. */
 export class FeedScraper {
@@ -13,7 +13,7 @@ export class FeedScraper {
   }
 
   /** Inicia la consulta de los artículos de todos los periódicos. */
-  async getAllFeeds(): Promise<CreateFeedDto[]> {
+  async getAllFeeds(): Promise<CreateScrapedFeedDto[]> {
     const loadedFeeds = await Promise.all(
       this.scrapers.map((sc) => sc.loadFeeds()),
     );
@@ -29,21 +29,21 @@ abstract class ArticleScraper {
     return cheerio.fromURL(url);
   }
 
-  abstract loadFeeds(): Promise<CreateFeedDto[]>;
+  abstract loadFeeds(): Promise<CreateScrapedFeedDto[]>;
 }
 
 export class ElMundoScraper extends ArticleScraper {
-  async loadFeeds(): Promise<CreateFeedDto[]> {
+  async loadFeeds(): Promise<CreateScrapedFeedDto[]> {
     const $ = await this.loadUrl('https://www.elmundo.es/');
 
     const articles = $('article header a');
 
-    const newFeeds: CreateFeedDto[] = [];
+    const newFeeds: CreateScrapedFeedDto[] = [];
 
     articles.each((i, elem) => {
       if (i >= this.feedCount) return false;
 
-      const newFeed = new CreateFeedDto();
+      const newFeed = new CreateScrapedFeedDto();
       newFeed.feed = 'el_mundo';
       newFeed.headline = $(elem).text();
       newFeed.url = $(elem).attr('href');
@@ -58,17 +58,17 @@ export class ElMundoScraper extends ArticleScraper {
 }
 
 export class ElPaisScraper extends ArticleScraper {
-  async loadFeeds(): Promise<CreateFeedDto[]> {
+  async loadFeeds(): Promise<CreateScrapedFeedDto[]> {
     const $ = await this.loadUrl('https://elpais.com/');
 
     const articles = $('article header h2 a');
 
-    const newFeeds: CreateFeedDto[] = [];
+    const newFeeds: CreateScrapedFeedDto[] = [];
 
     articles.each((i, elem) => {
       if (i >= this.feedCount) return false;
 
-      const newFeed = new CreateFeedDto();
+      const newFeed = new CreateScrapedFeedDto();
       newFeed.feed = 'el_pais';
       newFeed.headline = $(elem).text();
       newFeed.url = $(elem).attr('href');

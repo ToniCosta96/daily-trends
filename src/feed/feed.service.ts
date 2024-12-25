@@ -60,13 +60,13 @@ export class FeedService {
 
   /** Carga los artículos de portada de diferentes periódicos y los guarda en base de datos. */
   async loadAll(): Promise<LoadAllResult> {
-    // Carga los feeds de todos los periódicos
+    // Carga los artículos de portada de hoy de todos los periódicos
     const feedScraper = new FeedScraper(5);
     const newFeeds = await feedScraper.getAllFeeds();
 
-    // Elimina los feeds del día que se hayan podido guardar antes para evitar duplicados
+    // Elimina los artículos de portada de hoy que se hayan podido guardar antes mediante scraping para evitar duplicados
     const deleteRes = await this.feedModel
-      .deleteMany({ date: new CustomDate().format() })
+      .deleteMany({ date: new CustomDate().format(), origin: 'scraper' })
       .exec();
 
     // Guarda los feeds en la base de datos

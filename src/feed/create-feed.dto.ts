@@ -1,4 +1,5 @@
 import {
+  Equals,
   IsDateString,
   IsIn,
   IsOptional,
@@ -7,6 +8,7 @@ import {
 } from 'class-validator';
 import { CustomDate } from 'src/core/utils/custom-date';
 
+/** Define un objeto feed proporcionado a través de la API. */
 export class CreateFeedDto {
   @IsIn(['el_pais', 'el_mundo'])
   @IsString()
@@ -22,4 +24,11 @@ export class CreateFeedDto {
   @IsDateString()
   @Matches(CustomDate.DATE_REGEX)
   date?: string;
+}
+
+/** Define un objeto feed creado dentro de la lógica de la aplicación. El campo `origin` tiene el valor 'scraper'. */
+export class CreateScrapedFeedDto extends CreateFeedDto {
+  @IsString()
+  @Equals('scraper')
+  readonly origin = 'scraper' as const;
 }

@@ -36,17 +36,22 @@ export class ElMundoScraper extends ArticleScraper {
   async loadFeeds(): Promise<CreateScrapedFeedDto[]> {
     const $ = await this.loadUrl('https://www.elmundo.es/');
 
-    const articles = $('article header a');
+    const articles = $('article').has('header a h2');
 
     const newFeeds: CreateScrapedFeedDto[] = [];
 
     articles.each((i, elem) => {
       if (i >= this.feedCount) return false;
 
+      const el = $(elem);
+      const aEl = el.find('header a');
+      const imgEl = el.find('picture img');
+
       const newFeed = new CreateScrapedFeedDto();
       newFeed.feed = 'el_mundo';
-      newFeed.headline = $(elem).text();
-      newFeed.url = $(elem).attr('href');
+      newFeed.headline = aEl.text();
+      newFeed.url = aEl.attr('href');
+      newFeed.imgUrl = imgEl.attr('src');
 
       newFeeds.push(newFeed);
 
@@ -61,17 +66,22 @@ export class ElPaisScraper extends ArticleScraper {
   async loadFeeds(): Promise<CreateScrapedFeedDto[]> {
     const $ = await this.loadUrl('https://elpais.com/');
 
-    const articles = $('article header h2 a');
+    const articles = $('article').has('header h2 a');
 
     const newFeeds: CreateScrapedFeedDto[] = [];
 
     articles.each((i, elem) => {
       if (i >= this.feedCount) return false;
 
+      const el = $(elem);
+      const aEl = el.find('header h2 a');
+      const imgEl = el.find('figure img');
+
       const newFeed = new CreateScrapedFeedDto();
       newFeed.feed = 'el_pais';
-      newFeed.headline = $(elem).text();
-      newFeed.url = $(elem).attr('href');
+      newFeed.headline = aEl.text();
+      newFeed.url = aEl.attr('href');
+      newFeed.imgUrl = imgEl.attr('src');
 
       newFeeds.push(newFeed);
 

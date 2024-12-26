@@ -4,6 +4,7 @@ import {
   IsIn,
   IsOptional,
   IsString,
+  IsUrl,
   Matches,
 } from 'class-validator';
 import { CustomDate } from 'src/core/utils/custom-date';
@@ -17,8 +18,13 @@ export class CreateFeedDto {
   @IsString()
   headline: string;
 
-  @IsString()
+  @IsOptional()
+  @IsUrl()
   url?: string;
+
+  @IsOptional()
+  @IsUrl()
+  imgUrl?: string;
 
   @IsOptional()
   @IsDateString()

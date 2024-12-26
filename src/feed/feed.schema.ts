@@ -15,6 +15,9 @@ export class Feed {
   @Prop()
   url?: string;
 
+  @Prop()
+  imgUrl?: string;
+
   @Prop({
     type: String,
     required: true,

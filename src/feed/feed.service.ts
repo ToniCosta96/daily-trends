@@ -6,7 +6,7 @@ import { CreateFeedDto } from './create-feed.dto';
 import { FeedScraper } from './feed-scraper';
 import { CustomDate } from 'src/core/utils/custom-date';
 
-const SELECT_FEED = 'feed headline url date createdAt updatedAt';
+const SELECT_FEED = 'feed headline url imgUrl date createdAt updatedAt';
 
 interface LoadAllResult {
   deletedFeedsCount: number;

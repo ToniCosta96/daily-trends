@@ -44,7 +44,7 @@ export class ElMundoScraper extends ArticleScraper {
       if (i >= this.feedCount) return false;
 
       const el = $(elem);
-      const aEl = el.find('header a');
+      const aEl = el.find('header a').has('h2');
       const imgEl = el.find('picture img');
 
       const newFeed = new CreateScrapedFeedDto();
